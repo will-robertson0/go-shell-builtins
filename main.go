@@ -12,6 +12,10 @@ import (
 	"github.com/will-robertson0/go-shell-builtins/builtins"
 )
 
+var (
+    builtinCmds [7]string = [7]string{"cd", "env", "echo", "source", "export", "type", "exit"}
+)
+
 func main() {
 	exit := make(chan struct{}, 2) // buffer this so there's no deadlock.
 	runLoop(os.Stdin, os.Stdout, os.Stderr, exit)
@@ -78,6 +82,18 @@ func handleInput(w io.Writer, input string, exit chan<- struct{}) error {
 		return builtins.ChangeDirectory(args...)
 	case "env":
 		return builtins.EnvironmentVariables(w, args...)
+    // case "helloworld":
+    //     return builtins.HelloWorld(w, args...)
+    case "echo":
+        return builtins.Echo(w, args...)
+    case "source":
+        return builtins.Source(args...)
+    case "export":
+        return builtins.Export(args...)
+    case "pwd":
+        return builtins.Pwd()
+    case "type":
+        return builtins.Type(builtinCmds, args...)
 	case "exit":
 		exit <- struct{}{}
 		return nil
